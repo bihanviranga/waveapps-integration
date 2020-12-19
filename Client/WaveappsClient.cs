@@ -15,7 +15,7 @@ namespace waveapps.Client
 
         public WaveappsClient()
         {
-            var token = "fhSBKWgy22k8TiAMhG4iKxzP4zpHid";
+            var token = "XXXXX";
             var options = new GraphQLHttpClientOptions
             {
                 EndPoint = new Uri("https://gql.waveapps.com/graphql/public")
