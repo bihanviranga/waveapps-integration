@@ -2,8 +2,8 @@ using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using GraphQL;
-using GraphQL.Client.Abstractions;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 
@@ -25,7 +25,7 @@ namespace waveapps.Client
             _client = new GraphQLHttpClient(options, new NewtonsoftJsonSerializer(), httpClient);
         }
 
-        public async Task GetAllUsers()
+        public async Task<List<CustomerWrapper>> GetAllCustomers()
         {
             var query = new GraphQLRequest
             {
@@ -46,7 +46,71 @@ namespace waveapps.Client
                     }"
             };
             var response = await _client.SendQueryAsync<BusinessResponse>(query);
-            Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            // raw output
+            // Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            return response.Data.business.customers.edges;
+        }
+
+        public async Task CreateCustomer(string name, string email)
+        {
+            var customer = new CustomerInput();
+            customer.businessId = "QnVzaW5lc3M6OTY4NTcyZWItM2FhYy00OWU0LTlkY2UtMmE2MDBhNDNmZWRj";
+            customer.name = name;
+            customer.email = email;
+            var customerWrapper = new CustomerInputWrapper();
+            customerWrapper.input = customer;
+
+            var query = new GraphQLRequest
+            {
+                Query = @"
+                    mutation ($input: CustomerCreateInput!) {
+                         customerCreate(input: $input) {
+                            didSucceed
+                            inputErrors {
+                                code
+                                message
+                                path
+                            }
+                            customer {
+                                id
+                                name
+                                firstName
+                                lastName
+                                email
+                                address {
+                                    addressLine1
+                                    addressLine2
+                                    city
+                                    province {
+                                        code
+                                        name
+                                    }
+                                    country {
+                                        code
+                                        name
+                                    }
+                                    postalCode
+                                }
+                                currency {
+                                    code
+                                }
+                            }
+                        }
+                    }",
+                Variables = new { input = customer }
+            };
+
+            try
+            {
+                var response = await _client.SendMutationAsync<Customer>(query);
+                Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch (GraphQL.Client.Http.GraphQLHttpRequestException exception)
+            {
+                Console.WriteLine(exception.StatusCode);
+                Console.WriteLine(exception.ResponseHeaders);
+                Console.WriteLine(exception.Content);
+            }
         }
     }
 }
