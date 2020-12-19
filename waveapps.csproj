@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="GraphQL.client" Version="3.2.0" />
+    <PackageReference Include="GraphQL.Client.Serializer.NewtonSoft" Version="3.2.0" />
+  </ItemGroup>
+
 </Project>
