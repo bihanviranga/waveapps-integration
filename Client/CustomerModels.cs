@@ -67,9 +67,9 @@ namespace waveapps.Client
         public string email { get; set; }
     }
 
-    public class CustomerInputWrapper
+    public class CustomerDeleteInput
     {
-        public CustomerInput input;
+        public string id { get; set; }
     }
 
 }

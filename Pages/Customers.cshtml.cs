@@ -25,9 +25,15 @@ namespace waveapps.Pages
             }
         }
 
-        public async Task<IActionResult> OnPostAsync([FromForm] string name, [FromForm] string email)
+        public async Task<IActionResult> OnPostCreateCustomerAsync([FromForm] string name, [FromForm] string email)
         {
             await _client.CreateCustomer(name, email);
+            return RedirectToPage("./Customers");
+        }
+
+        public async Task<IActionResult> OnPostDeleteCustomerAsync([FromForm] string customerId)
+        {
+            await _client.DeleteCustomer(customerId);
             return RedirectToPage("./Customers");
         }
     }

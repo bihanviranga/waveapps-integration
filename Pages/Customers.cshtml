@@ -13,7 +13,7 @@
         <form method="POST">
             <input type="text" name="name" placeholder="Customer name" />
             <input type="email" name="email" placeholder="Customer email" />
-            <button class="btn btn-primary">Create Customer</button>
+            <input type="submit" class="btn btn-primary" value="Create" asp-page-handler="CreateCustomer" />
         </form>
     </div>
     <div class="row">
@@ -31,7 +31,13 @@
                     <tr>
                         <td>@cust.name</td>
                         <td>@cust.email</td>
-                        <td></td>
+                        <td>
+                            <form method="POST">
+                                <input type="hidden" name="customerId" value="@cust.id" />
+                                <input type="submit" value="Del" class="btn btn-sm btn-danger"
+                                    asp-page-handler="DeleteCustomer" />
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>

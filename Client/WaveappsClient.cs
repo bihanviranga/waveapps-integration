@@ -57,8 +57,6 @@ namespace waveapps.Client
             customer.businessId = "QnVzaW5lc3M6OTY4NTcyZWItM2FhYy00OWU0LTlkY2UtMmE2MDBhNDNmZWRj";
             customer.name = name;
             customer.email = email;
-            var customerWrapper = new CustomerInputWrapper();
-            customerWrapper.input = customer;
 
             var query = new GraphQLRequest
             {
@@ -103,12 +101,38 @@ namespace waveapps.Client
             try
             {
                 var response = await _client.SendMutationAsync<Customer>(query);
-                Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+                // Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (GraphQL.Client.Http.GraphQLHttpRequestException exception)
             {
                 Console.WriteLine(exception.StatusCode);
                 Console.WriteLine(exception.ResponseHeaders);
+                Console.WriteLine(exception.Content);
+            }
+        }
+
+        public async Task DeleteCustomer(string customerId)
+        {
+            CustomerDeleteInput cust = new CustomerDeleteInput();
+            cust.id = customerId;
+            var query = new GraphQLRequest
+            {
+                Query = @"
+                    mutation ($input: CustomerDeleteInput!) {
+                        customerDelete(input: $input) {
+                            didSucceed
+                        }
+                    }",
+                Variables = new { input = cust }
+            };
+
+            try
+            {
+                var response = await _client.SendMutationAsync<Customer>(query);
+                // Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch (GraphQL.Client.Http.GraphQLHttpRequestException exception)
+            {
                 Console.WriteLine(exception.Content);
             }
         }
